@@ -82,6 +82,7 @@
     display:flex; align-items:center; justify-content:center;
     gap:0; margin: 26px 0 30px;
   }
+  .avatar-wrap { position:relative; flex-shrink:0; }
   .avatar {
     width:76px; height:76px; border-radius:50%;
     background:linear-gradient(135deg,#fce9e7,#f2d3d0);
@@ -89,9 +90,20 @@
     font-size:11px; color:#b89c99; letter-spacing:1px;
     border:3px solid #fff;
     box-shadow:0 4px 18px rgba(217,143,138,.18);
-    overflow:hidden; flex-shrink:0;
+    overflow:hidden;
   }
   .avatar img { width:100%; height:100%; object-fit:cover; }
+  /* 猫猫耳朵：圆弧小耳 */
+  .ear {
+    position:absolute; top:-11px; width:30px; height:30px;
+    background:linear-gradient(135deg,#fdeeed,#f3cfcd);
+    border:3px solid #fff;
+    box-shadow:0 3px 10px rgba(217,143,138,.18);
+    z-index:0;
+  }
+  .ear.l { left:3px; border-radius:100% 60% 40% 45%; transform:rotate(-18deg); }
+  .ear.r { right:3px; border-radius:60% 100% 45% 40%; transform:rotate(18deg); }
+  .avatar-wrap .avatar { position:relative; z-index:1; }
   .pulse { flex:1; height:52px; max-width:110px; }
   .pulse svg { width:100%; height:100%; overflow:visible; }
   .pulse path {
@@ -157,13 +169,19 @@
 
   <div class="page active" id="p-home">
     <div class="couple">
-      <div class="avatar"><img src="images/you_girl.jpg" alt="11"></div>
+      <div class="avatar-wrap">
+        <span class="ear l"></span><span class="ear r"></span>
+        <div class="avatar"><img src="images/you_girl.jpg" alt="11"></div>
+      </div>
       <div class="pulse">
         <svg viewBox="0 0 110 52" preserveAspectRatio="none">
           <path d="M0,26 L26,26 L33,10 L40,42 L47,26 L62,26 L69,14 L76,38 L83,26 L110,26"/>
         </svg>
       </div>
-      <div class="avatar"><img src="images/me_boy.jpg" alt="屿屿"></div>
+      <div class="avatar-wrap">
+        <span class="ear l"></span><span class="ear r"></span>
+        <div class="avatar"><img src="images/me_boy.jpg" alt="屿屿"></div>
+      </div>
     </div>
 
     <div class="card">
