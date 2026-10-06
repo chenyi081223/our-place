@@ -77,6 +77,23 @@
   .card p { font-size:13px; color:var(--text-light); line-height:2; }
   .empty { text-align:center; color:#d4c0bd; font-size:13px; padding:60px 0; line-height:2.2; }
 
+  /* 纪念日 */
+  .anniv { text-align:center; padding:26px 20px 24px; position:relative; overflow:hidden; }
+  .anniv-cat {
+    width:96px; height:96px; object-fit:cover; border-radius:22px;
+    opacity:.9; margin-bottom:12px;
+    box-shadow:0 6px 20px rgba(217,143,138,.16);
+  }
+  .anniv h3 { font-size:11px; color:#c9a9a6; letter-spacing:4px; margin-bottom:6px; }
+  .anniv-day { font-size:44px; font-weight:200; color:#d98f8a; letter-spacing:2px; line-height:1.2; }
+  .anniv-day small { font-size:13px; letter-spacing:3px; margin-left:6px; color:#c9a9a6; }
+  .anniv-since { font-size:10px; color:#cdb9b6; letter-spacing:3px; margin-top:8px; }
+  .anniv-line {
+    width:36px; height:1px; background:#f0d8d4;
+    margin:16px auto 14px;
+  }
+  .anniv-note { font-size:12px; color:#b89c99; letter-spacing:2px; }
+
   /* 首页 情侣头像 + 心动电波 */
   .couple {
     display:flex; align-items:center; justify-content:center;
@@ -202,10 +219,13 @@
       </div>
     </div>
 
-    <div class="card" style="text-align:center;">
-      <h3>在一起</h3>
-      <p style="font-size:26px;color:#d98f8a;letter-spacing:2px;line-height:1.6;"><span id="days">0</span> 天</p>
-      <p style="font-size:11px;letter-spacing:2px;">2026.10.05 起</p>
+    <div class="card anniv">
+      <img class="anniv-cat" src="images/pixel_cats.jpg" alt="">
+      <h3>在我们一起的第</h3>
+      <p class="anniv-day"><span id="days">0</span><small>天</small></p>
+      <p class="anniv-since">2026.10.05 · 起</p>
+      <div class="anniv-line"></div>
+      <p class="anniv-note">往后每一天，都算数。</p>
     </div>
 
     <div class="card">
