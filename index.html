@@ -93,16 +93,18 @@
     overflow:hidden;
   }
   .avatar img { width:100%; height:100%; object-fit:cover; }
-  /* 猫猫耳朵：圆弧小耳 */
+  /* 猫猫耳朵：镂空线条尖耳 */
   .ear {
-    position:absolute; top:-11px; width:30px; height:30px;
-    background:linear-gradient(135deg,#fdeeed,#f3cfcd);
-    border:3px solid #fff;
-    box-shadow:0 3px 10px rgba(217,143,138,.18);
-    z-index:0;
+    position:absolute; top:-16px; width:34px; height:34px;
+    z-index:0; overflow:visible;
   }
-  .ear.l { left:3px; border-radius:100% 60% 40% 45%; transform:rotate(-18deg); }
-  .ear.r { right:3px; border-radius:60% 100% 45% 40%; transform:rotate(18deg); }
+  .ear.l { left:1px; }
+  .ear.r { right:1px; }
+  .ear svg { width:100%; height:100%; overflow:visible; }
+  .ear path {
+    fill:none; stroke:#f0c8c5; stroke-width:3.5;
+    stroke-linecap:round; stroke-linejoin:round;
+  }
   .avatar-wrap .avatar { position:relative; z-index:1; }
   .pulse { flex:1; height:52px; max-width:110px; }
   .pulse svg { width:100%; height:100%; overflow:visible; }
@@ -170,7 +172,8 @@
   <div class="page active" id="p-home">
     <div class="couple">
       <div class="avatar-wrap">
-        <span class="ear l"></span><span class="ear r"></span>
+        <span class="ear l"><svg viewBox="0 0 34 34"><path d="M30,30 C30,30 26,10 8,4 C10,18 16,26 30,30 Z"/></svg></span>
+        <span class="ear r"><svg viewBox="0 0 34 34"><path d="M4,30 C4,30 8,10 26,4 C24,18 18,26 4,30 Z"/></svg></span>
         <div class="avatar"><img src="images/you_girl.jpg" alt="11"></div>
       </div>
       <div class="pulse">
@@ -179,7 +182,8 @@
         </svg>
       </div>
       <div class="avatar-wrap">
-        <span class="ear l"></span><span class="ear r"></span>
+        <span class="ear l"><svg viewBox="0 0 34 34"><path d="M30,30 C30,30 26,10 8,4 C10,18 16,26 30,30 Z"/></svg></span>
+        <span class="ear r"><svg viewBox="0 0 34 34"><path d="M4,30 C4,30 8,10 26,4 C24,18 18,26 4,30 Z"/></svg></span>
         <div class="avatar"><img src="images/me_boy.jpg" alt="屿屿"></div>
       </div>
     </div>
