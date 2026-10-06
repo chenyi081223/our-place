@@ -202,6 +202,12 @@
       </div>
     </div>
 
+    <div class="card" style="text-align:center;">
+      <h3>在一起</h3>
+      <p style="font-size:26px;color:#d98f8a;letter-spacing:2px;line-height:1.6;"><span id="days">0</span> 天</p>
+      <p style="font-size:11px;letter-spacing:2px;">2026.10.05 起</p>
+    </div>
+
     <div class="card">
       <h3>下雨天</h3>
       <p>等哪天下雨，我们牵手去散步。<br>十指交握，不松开。</p>
@@ -254,6 +260,17 @@
 
 <script>
 const PASSWORD = "yuyuai11-erutuf";
+
+// 在一起的天数
+(function(){
+  const start = new Date(2026, 9, 5);
+  start.setHours(0,0,0,0);
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  const d = Math.floor((now - start) / 86400000) + 1;
+  const el = document.getElementById('days');
+  if(el) el.textContent = d;
+})();
 
 const lockEl = document.getElementById('lock');
 const appEl  = document.getElementById('app');
