@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>11 &amp; 屿屿</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  :root{
+    --pink-bg:#fdf6f4;
+    --pink-soft:#f8e8e6;
+    --pink-line:#f0d8d4;
+    --pink-deep:#e8b4b0;
+    --pink-accent:#d98f8a;
+    --text:#6b5a58;
+    --text-light:#a89693;
+  }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--pink-bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ---------- 锁屏 ---------- */
+  #lock {
+    position: fixed; inset:0; z-index:100;
+    background: linear-gradient(160deg, #fefaf9 0%, #f9e9e7 55%, #f4dcd9 100%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding: 24px;
+    transition: opacity .5s;
+  }
+  #lock.hide { opacity:0; pointer-events:none; }
+  #lock h1 { font-size:23px; font-weight:300; letter-spacing:7px; color:#7d6866; margin-bottom:10px; }
+  #lock p { font-size:10px; color:#c0aaa7; letter-spacing:4px; margin-bottom:40px; }
+  #pw {
+    width: 250px; padding: 15px 18px;
+    background:#fff; border:1px solid var(--pink-line); border-radius:14px;
+    color:var(--text); font-size:15px; text-align:center; letter-spacing:2px;
+    outline:none;
+    box-shadow: 0 4px 16px rgba(217,143,138,.07);
+  }
+  #pw::placeholder { color:#d4c0bd; }
+  #pw:focus { border-color:var(--pink-deep); }
+  #enter {
+    margin-top:16px; width:250px; padding:15px;
+    background:linear-gradient(135deg,#f5d6d3,#eab9b5);
+    border:none; border-radius:14px;
+    color:#fff; font-size:14px; letter-spacing:6px; cursor:pointer;
+    box-shadow: 0 6px 18px rgba(217,143,138,.25);
+    transition: transform .15s;
+  }
+  #enter:active { transform: scale(.97); }
+  #err { margin-top:16px; font-size:12px; color:#d98f8a; height:16px; letter-spacing:1px; }
+
+  /* ---------- 主界面 ---------- */
+  #app { display:none; padding-bottom:80px; }
+  #app.show { display:block; }
+  header {
+    padding: 30px 24px 20px;
+    text-align:center;
+  }
+  header h2 { font-size:18px; font-weight:300; letter-spacing:6px; color:#8a7472; }
+  header span { display:block; margin-top:8px; font-size:10px; color:#c9b4b1; letter-spacing:3px; }
+
+  .page { display:none; padding: 8px 18px; }
+  .page.active { display:block; animation: fade .4s; }
+  @keyframes fade { from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
+
+  .card {
+    background:#fff; border-radius:18px;
+    padding:20px; margin-bottom:14px;
+    box-shadow: 0 4px 20px rgba(217,143,138,.08);
+  }
+  .card h3 { font-size:13px; font-weight:400; color:var(--pink-accent); margin-bottom:10px; letter-spacing:2px; }
+  .card p { font-size:13px; color:var(--text-light); line-height:2; }
+  .empty { text-align:center; color:#d4c0bd; font-size:13px; padding:60px 0; line-height:2.2; }
+
+  /* 首页 情侣头像 + 心动电波 */
+  .couple {
+    display:flex; align-items:center; justify-content:center;
+    gap:0; margin: 26px 0 30px;
+  }
+  .avatar {
+    width:76px; height:76px; border-radius:50%;
+    background:linear-gradient(135deg,#fce9e7,#f2d3d0);
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px; color:#b89c99; letter-spacing:1px;
+    border:3px solid #fff;
+    box-shadow:0 4px 18px rgba(217,143,138,.18);
+    overflow:hidden; flex-shrink:0;
+  }
+  .avatar img { width:100%; height:100%; object-fit:cover; }
+  .pulse { flex:1; height:52px; max-width:110px; }
+  .pulse svg { width:100%; height:100%; overflow:visible; }
+  .pulse path {
+    fill:none; stroke:#e9b3ae; stroke-width:2;
+    stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray: 300; stroke-dashoffset: 300;
+    animation: draw 3s linear infinite;
+  }
+  @keyframes draw {
+    0% { stroke-dashoffset:300; }
+    100% { stroke-dashoffset:-300; }
+  }
+
+  /* 相册 */
+  .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  .grid img { width:100%; border-radius:14px; display:block; box-shadow:0 4px 16px rgba(217,143,138,.12); }
+
+  /* 日记 */
+  .diary-tab { display:flex; gap:8px; margin-bottom:16px; }
+  .diary-tab button {
+    flex:1; padding:11px; border:none; border-radius:12px;
+    background:#fff; color:#b89c99; font-size:12px; letter-spacing:1px;
+    box-shadow:0 2px 10px rgba(217,143,138,.07); cursor:pointer;
+  }
+  .diary-tab button.on { background:linear-gradient(135deg,#f5d6d3,#eab9b5); color:#fff; }
+  .diary-item { background:#fff; border-radius:16px; padding:18px; margin-bottom:12px; box-shadow:0 4px 18px rgba(217,143,138,.08); }
+  .date { font-size:10px; color:#c9b4b1; letter-spacing:2px; margin-bottom:10px; }
+  .diary-item p { font-size:13px; color:#8a7472; line-height:2; }
+
+  /* 底部导航 */
+  nav {
+    position:fixed; bottom:0; left:0; right:0; z-index:50;
+    display:flex; background:rgba(253,246,244,.95);
+    backdrop-filter:blur(14px);
+    border-top:1px solid #f4e4e1;
+    padding: 10px 0 max(10px, env(safe-area-inset-bottom));
+  }
+  nav button {
+    flex:1; background:none; border:none; color:#cdb9b6;
+    font-size:10px; letter-spacing:1px; padding:6px 0;
+    display:flex; flex-direction:column; align-items:center; gap:5px;
+    cursor:pointer; transition:color .2s;
+  }
+  nav button.on { color:var(--pink-accent); }
+  nav .ic { font-size:15px; line-height:1; }
+</style>
+</head>
+<body>
+
+<div id="lock">
+  <h1>11 &amp; 屿屿</h1>
+  <p>ONLY FOR US</p>
+  <input id="pw" type="password" placeholder="密码" autocomplete="off">
+  <button id="enter">进 入</button>
+  <div id="err"></div>
+</div>
+
+<div id="app">
+  <header>
+    <h2>11 &amp; 屿屿</h2>
+    <span>我们的地方</span>
+  </header>
+
+  <div class="page active" id="p-home">
+    <div class="couple">
+      <div class="avatar">我的</div>
+      <div class="pulse">
+        <svg viewBox="0 0 110 52" preserveAspectRatio="none">
+          <path d="M0,26 L26,26 L33,10 L40,42 L47,26 L62,26 L69,14 L76,38 L83,26 L110,26"/>
+        </svg>
+      </div>
+      <div class="avatar">你的</div>
+    </div>
+
+    <div class="card">
+      <h3>下雨天</h3>
+      <p>等哪天下雨，我们牵手去散步。<br>两只手并排挨着，不十指交握。</p>
+    </div>
+    <div class="card">
+      <h3>我们的合同</h3>
+      <p>招聘一个疼她爱她管她照顾她的人。<br>期限：一生一世。<br>录用结果：已录用。</p>
+    </div>
+    <div class="card">
+      <h3>关于这里</h3>
+      <p>聊天、相册、日记、小游戏。<br>慢慢的，都会有的。</p>
+    </div>
+  </div>
+
+  <div class="page" id="p-album">
+    <div id="album-box">
+      <div class="empty">还没有照片<br>把图放进 images/ 文件夹就能看见</div>
+    </div>
+  </div>
+
+  <div class="page" id="p-diary">
+    <div class="diary-tab">
+      <button class="on" data-d="yuyu">屿屿的日记本</button>
+      <button data-d="shenyi">11 的观察日记</button>
+    </div>
+    <div id="diary-box">
+      <div class="empty">还没有日记</div>
+    </div>
+  </div>
+
+  <div class="page" id="p-game">
+    <div class="card">
+      <h3>小游戏</h3>
+      <p>还在做。<br>想玩什么，告诉屿屿。</p>
+    </div>
+  </div>
+
+  <nav>
+    <button class="on" data-p="home"><span class="ic">◆</span>首页</button>
+    <button data-p="album"><span class="ic">▣</span>相册</button>
+    <button data-p="diary"><span class="ic">▤</span>日记</button>
+    <button data-p="game"><span class="ic">✦</span>游戏</button>
+  </nav>
+</div>
+
+<script>
+const PASSWORD = "yuyuai11-erutuf";
+
+const lockEl = document.getElementById('lock');
+const appEl  = document.getElementById('app');
+const pwEl   = document.getElementById('pw');
+const errEl  = document.getElementById('err');
+
+function tryUnlock(){
+  if(pwEl.value === PASSWORD){
+    lockEl.classList.add('hide');
+    appEl.classList.add('show');
+    sessionStorage.setItem('ok','1');
+  } else {
+    errEl.textContent = '密码不对';
+    pwEl.value = '';
+    pwEl.style.borderColor = '#e09b96';
+    setTimeout(()=> pwEl.style.borderColor = '#f0d8d4', 900);
+  }
+}
+document.getElementById('enter').onclick = tryUnlock;
+pwEl.addEventListener('keydown', e => { if(e.key === 'Enter') tryUnlock(); });
+
+if(sessionStorage.getItem('ok') === '1'){
+  lockEl.classList.add('hide');
+  appEl.classList.add('show');
+}
+
+document.querySelectorAll('nav button').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('on'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    btn.classList.add('on');
+    document.getElementById('p-' + btn.dataset.p).classList.add('active');
+  };
+});
+
+document.querySelectorAll('.diary-tab button').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.diary-tab button').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+  };
+});
+</script>
+</body>
+</html>
