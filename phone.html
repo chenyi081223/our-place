@@ -23,17 +23,27 @@ body{
   background:linear-gradient(170deg,#fffdfe 0%,#fdf3f7 55%,#fbe9f0 100%);
   overflow:hidden;
 }
+#bgLayer{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  opacity:.55;filter:saturate(.9);pointer-events:none;z-index:0;
+  transition:opacity .3s;
+}
+.phone::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:linear-gradient(170deg,rgba(255,253,254,.72) 0%,rgba(253,243,247,.55) 45%,rgba(251,233,240,.68) 100%);
+}
 @media(min-width:480px){
   .phone{border-radius:34px;box-shadow:0 18px 50px rgba(180,130,150,.22);height:94vh}
 }
-.screen{position:absolute;inset:0;display:none;flex-direction:column}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;z-index:2}
 .screen.active{display:flex;animation:fade .22s ease}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
 /* ---------- 锁屏 ---------- */
 #lock{
   justify-content:flex-start;padding:0 26px;
-  background:linear-gradient(165deg,#fffdfe 0%,#fdf1f6 50%,#f9e2ec 100%);
+  background:linear-gradient(165deg,rgba(255,253,254,.55) 0%,rgba(253,241,246,.42) 50%,rgba(249,226,236,.55) 100%);
+  backdrop-filter:blur(2px);
 }
 .lock-time{font-size:64px;font-weight:200;letter-spacing:-2px;margin-top:26vh;line-height:1}
 .lock-date{font-size:14px;color:var(--ink-2);margin-top:10px;letter-spacing:2px}
@@ -62,10 +72,11 @@ body{
 .app{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:transform .15s}
 .app:active{transform:scale(.93)}
 .icon{
-  width:52px;height:52px;border-radius:15px;
-  background:var(--white);
-  border:1px solid #f6e7ee;
-  box-shadow:var(--shadow);
+  width:54px;height:54px;border-radius:16px;
+  background:rgba(255,253,254,.82);
+  border:1px solid rgba(255,255,255,.9);
+  box-shadow:0 3px 12px rgba(190,140,160,.16),inset 0 1px 0 rgba(255,255,255,.9);
+  backdrop-filter:blur(10px);
   display:flex;align-items:center;justify-content:center;
   font-size:22px;
 }
@@ -80,7 +91,7 @@ body{
 .page-head{
   display:flex;align-items:center;gap:10px;
   padding:18px 18px 12px;border-bottom:1px solid var(--line);
-  background:rgba(255,253,254,.9);backdrop-filter:blur(8px);
+  background:rgba(255,253,254,.72);backdrop-filter:blur(14px);
   position:relative;z-index:2;
 }
 .back{font-size:20px;color:#b98da0;cursor:pointer;padding:2px 6px}
@@ -179,6 +190,7 @@ body{
 </head>
 <body>
 <div class="phone">
+<div id="bgLayer"></div>
 
   <!-- 锁屏 -->
   <section class="screen active" id="lock" onclick="unlock()">
@@ -344,7 +356,8 @@ const DEF={
     {k:'她的成绩',v:'语文110、数学59、英语72、政治69、历史69、地理56，总分435。'},
     {k:'她的作息',v:'六点二十起，晚上十点回家，一般一点睡。'}
   ],
-  api:{url:'',key:'',model:''}
+  api:{url:'',key:'',model:''},
+  bg:''
 };
 let DB=load();
 function load(){
@@ -556,6 +569,34 @@ function clearAll(){
   if(!confirm('再确认一次：清空后无法恢复。'))return;
   DB=JSON.parse(JSON.stringify(DEF));save();renderBackup();
 }
+function applyBg(){
+  const l=document.getElementById('bgLayer');
+  if(DB.bg){l.style.backgroundImage='url('+DB.bg+')';l.style.opacity='.58';}
+  else{l.style.backgroundImage='none';l.style.opacity='0';}
+  const n=document.getElementById('bgName');
+  if(n)n.textContent=DB.bg?'已设置':'默认渐变';
+}
+function setBg(input){
+  const f=input.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    // 压缩
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement('canvas');
+      const max=1400, sc=Math.min(1,max/Math.max(img.width,img.height));
+      c.width=img.width*sc;c.height=img.height*sc;
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      DB.bg=c.toDataURL('image/jpeg',.82);
+      try{save();}catch(e){alert('图片太大，换个小的');return;}
+      applyBg();renderSettings();
+    };
+    img.src=r.result;
+  };
+  r.readAsDataURL(f);
+}
+function clearBg(){DB.bg='';save();applyBg();renderSettings();}
+
 function renderSettings(){
   document.getElementById('settingsBody').innerHTML=`
     <div class="card"><h4>关于</h4>
@@ -564,7 +605,11 @@ function renderSettings(){
     <div class="row"><span>主题</span><small>浅粉 · 白</small></div>
     <div class="row"><span>锁屏语</span><small>今天想你了，很多次。</small></div>
     <div class="row"><span>桌面小字</span><small>你是我唯一靠岸的地方</small></div>
+    <div class="row"><span>背景</span><small id="bgName">默认渐变</small></div>
     <div class="row"><span>版本</span><small>1.0</small></div>
+    <button class="btn" onclick="document.getElementById('bgFile').click()">换背景图</button>
+    <button class="btn danger" onclick="clearBg()">恢复默认渐变</button>
+    <input type="file" id="bgFile" accept="image/*" style="display:none" onchange="setBg(this)">
     <button class="btn" style="margin-top:18px" onclick="go('backup')">去备份</button>`;
 }
 function renderAlbum(){
@@ -581,6 +626,7 @@ function renderCall(){
 
 /* 初始化 */
 renderChatList();
+applyBg();
 </script>
 </body>
 </html>
