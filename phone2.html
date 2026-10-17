@@ -25,17 +25,17 @@ body{
 }
 #bgLayer{
   position:absolute;inset:0;background-size:cover;background-position:center;
-  opacity:.55;filter:saturate(.9);pointer-events:none;z-index:0;
+  opacity:1;pointer-events:none;z-index:0;
   transition:opacity .3s;
 }
 .phone::after{
   content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
-  background:linear-gradient(170deg,rgba(255,253,254,.72) 0%,rgba(253,243,247,.55) 45%,rgba(251,233,240,.68) 100%);
+  background:linear-gradient(170deg,rgba(255,253,254,.28) 0%,rgba(253,243,247,.12) 45%,rgba(251,233,240,.30) 100%);
 }
 @media(min-width:480px){
   .phone{border-radius:34px;box-shadow:0 18px 50px rgba(180,130,150,.22);height:94vh}
 }
-.screen{position:absolute;inset:0;display:none;flex-direction:column;z-index:2}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;z-index:2;overflow:hidden}
 .screen.active{display:flex;animation:fade .22s ease}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
@@ -83,7 +83,11 @@ body{
 }
 .float-notes{position:absolute;inset:0;pointer-events:none;z-index:1}
 .float-notes .note-chip{pointer-events:none}
-.app-cluster{z-index:5!important}
+.app-cluster{
+  position:absolute;left:0;right:0;bottom:110px;z-index:99;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:18px 8px;
+  padding:0 20px;
+}
 .home-foot,.page-dots{pointer-events:none}
 .note-chip{
   position:absolute;padding:9px 12px;border-radius:12px;
@@ -95,7 +99,7 @@ body{
   backdrop-filter:blur(6px);
 }
 .app-cluster{
-  position:absolute;left:0;right:0;bottom:120px;
+  position:absolute;left:0;right:0;bottom:120px;z-index:99;
   display:grid;grid-template-columns:repeat(4,1fr);gap:20px 8px;
   padding:0 22px;z-index:2;
 }
@@ -266,9 +270,9 @@ body{
     <div class="float-notes">
       <div class="note-chip" style="left:4%;top:12%;--r:-6deg">have a nice day<br><span>🌻</span></div>
       <div class="note-chip" style="right:6%;top:8%;--r:5deg">o. HAPPY<br>EVERYDAY</div>
-      <div class="note-chip" style="left:12%;bottom:18%;--r:3deg">今天也想你</div>
+      <div class="note-chip" style="right:8%;bottom:34%;--r:-4deg">今天也想你</div>
     </div>
-    <div class="app-cluster" id="appGrid"></div>
+    <div class="app-cluster"><div class="app" onclick="go('msg')"><div class="icon">💬</div><span>消息</span></div><div class="app" onclick="go('moments')"><div class="icon">✧</div><span>朋友圈</span></div><div class="app" onclick="go('album')"><div class="icon">🖼</div><span>相册</span></div><div class="app" onclick="go('call')"><div class="icon">📞</div><span>通话</span></div><div class="app" onclick="go('music')"><div class="icon">♪</div><span>音乐</span></div><div class="app" onclick="go('memo')"><div class="icon">📄</div><span>备忘</span></div><div class="app" onclick="go('card')"><div class="icon">👤</div><span>名片</span></div><div class="app" onclick="go('memory')"><div class="icon">❁</div><span>记忆</span></div><div class="app" onclick="go('persona')"><div class="icon">▤</div><span>人设</span></div><div class="app" onclick="go('world')"><div class="icon">📖</div><span>世界书</span></div><div class="app" onclick="go('api')"><div class="icon">⚙</div><span>接口</span></div><div class="app" onclick="go('backup')"><div class="icon">⬇</div><span>备份</span></div><div class="app" onclick="go('settings')"><div class="icon">⋯</div><span>设置</span></div></div>
     <div class="home-foot">你是我唯一靠岸的地方</div>
     <div class="page-dots"><i class="on"></i><i></i><i></i></div>
   </section>
@@ -464,24 +468,10 @@ function unlock(){}
 function goBackHome(){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById('lock').classList.add('active');}
 
 /* ============ 桌面图标 ============ */
-const APPS=[
-  {id:'msg',ic:'💬',n:'消息'},
-  {id:'moments',ic:'✧',n:'朋友圈'},
-  {id:'album',ic:'🖼',n:'相册'},
-  {id:'call',ic:'📞',n:'通话'},
-  {id:'music',ic:'♪',n:'音乐'},
-  {id:'memo',ic:'📄',n:'备忘'},
-  {id:'card',ic:'👤',n:'名片'},
-  {id:'memory',ic:'❁',n:'记忆'},
-  {id:'persona',ic:'▤',n:'人设'},
-  {id:'world',ic:'📖',n:'世界书'},
-  {id:'api',ic:'⚙',n:'接口'},
-  {id:'backup',ic:'⬇',n:'备份'},
-  {id:'settings',ic:'⋯',n:'设置'}
-];
-document.getElementById('appGrid').innerHTML=APPS.map(a=>
-  `<div class="app" onclick="go('${a.id}')"><div class="icon">${a.ic}</div><span>${a.n}</span></div>`
-).join('');
+gridEl.addEventListener('touchend',function(e){
+  const el=e.target.closest('.app');
+  if(el&&el.dataset.go){e.stopPropagation();e.preventDefault();go(el.dataset.go);}
+},true);
 
 /* ============ 消息 ============ */
 function renderChatList(){
@@ -631,12 +621,22 @@ function clearAll(){
   if(!confirm('再确认一次：清空后无法恢复。'))return;
   DB=JSON.parse(JSON.stringify(DEF));save();renderBackup();
 }
+const BGKEY='yuyu_bg_v1';
 function applyBg(){
   const l=document.getElementById('bgLayer');
-  if(DB.bg){l.style.backgroundImage='url('+DB.bg+')';l.style.opacity='.58';}
+  let bg='';
+  try{bg=localStorage.getItem(BGKEY)||'';}catch(e){}
+  if(!bg)bg='images/bg11.jpg';
+  if(bg){l.style.backgroundImage='url('+bg+')';l.style.opacity='1';}
   else{l.style.backgroundImage='none';l.style.opacity='0';}
   const n=document.getElementById('bgName');
-  if(n)n.textContent=DB.bg?'已设置':'默认渐变';
+  if(n)n.textContent=bg?'已设置':'默认渐变';
+}
+function pickBg(){
+  const inp=document.createElement('input');
+  inp.type='file';inp.accept='image/*';
+  inp.onchange=function(){setBg(this);};
+  inp.click();
 }
 function setBg(input){
   const f=input.files[0];if(!f)return;
@@ -646,18 +646,31 @@ function setBg(input){
     const img=new Image();
     img.onload=()=>{
       const c=document.createElement('canvas');
-      const max=1400, sc=Math.min(1,max/Math.max(img.width,img.height));
-      c.width=img.width*sc;c.height=img.height*sc;
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      DB.bg=c.toDataURL('image/jpeg',.82);
-      try{save();}catch(e){alert('图片太大，换个小的');return;}
+      const max=900, sc=Math.min(1,max/Math.max(img.width,img.height));
+      c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);
+      const ctx=c.getContext('2d');
+      ctx.drawImage(img,0,0,c.width,c.height);
+      let data=c.toDataURL('image/jpeg',.6);
+      // 还太大就继续降
+      let q=.6;
+      while(data.length>1500000 && q>0.25){
+        q-=0.1;data=c.toDataURL('image/jpeg',q);
+      }
+      try{
+        localStorage.removeItem(BGKEY);
+        localStorage.setItem(BGKEY,data);
+      }catch(e){
+        alert('存不下，换张小一点的图吧');
+        return;
+      }
+      DB.bg='';
       applyBg();renderSettings();
     };
     img.src=r.result;
   };
   r.readAsDataURL(f);
 }
-function clearBg(){DB.bg='';save();applyBg();renderSettings();}
+function clearBg(){try{localStorage.removeItem(BGKEY);}catch(e){}DB.bg='';applyBg();renderSettings();}
 
 function renderSettings(){
   document.getElementById('settingsBody').innerHTML=`
@@ -669,9 +682,8 @@ function renderSettings(){
     <div class="row"><span>桌面小字</span><small>你是我唯一靠岸的地方</small></div>
     <div class="row"><span>背景</span><small id="bgName">默认渐变</small></div>
     <div class="row"><span>版本</span><small>1.0</small></div>
-    <button class="btn" onclick="document.getElementById('bgFile').click()">换背景图</button>
+    <button class="btn" onclick="pickBg()">换背景图</button>
     <button class="btn danger" onclick="clearBg()">恢复默认渐变</button>
-    <input type="file" id="bgFile" accept="image/*" style="display:none" onchange="setBg(this)">
     <button class="btn" style="margin-top:18px" onclick="go('backup')">去备份</button>`;
 }
 function renderAlbum(){
