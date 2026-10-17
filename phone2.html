@@ -253,7 +253,7 @@ body{
 <div id="bgLayer"></div>
 
   <!-- 主页 -->
-  <section class="screen active" id="lock" onclick="unlock()">
+  <section class="screen active" id="lock">
     <div class="profile">
       <div class="avatar"><img src="images/avatar11.jpg" alt=""></div>
       <div class="pname">Csev13-y1</div>
@@ -272,7 +272,7 @@ body{
 
   <!-- 消息 -->
   <section class="screen" id="msg">
-    <div class="page-head"><div class="back" onclick="go('home')">‹</div><div class="page-title">消息</div></div>
+    <div class="page-head"><div class="back" onclick="goBackHome()">‹</div><div class="page-title">消息</div></div>
     <div class="page-body chat-list" id="chatList"></div>
   </section>
 
@@ -288,25 +288,25 @@ body{
 
   <!-- 朋友圈 -->
   <section class="screen" id="moments">
-    <div class="page-head"><div class="back" onclick="go('home')">‹</div><div class="page-title">朋友圈</div></div>
+    <div class="page-head"><div class="back" onclick="goBackHome()">‹</div><div class="page-title">朋友圈</div></div>
     <div class="page-body" id="momentsBody"></div>
   </section>
 
   <!-- 相册 -->
   <section class="screen" id="album">
-    <div class="page-head"><div class="back" onclick="go('home')">‹</div><div class="page-title">相册</div></div>
+    <div class="page-head"><div class="back" onclick="goBackHome()">‹</div><div class="page-title">相册</div></div>
     <div class="page-body"><div class="gallery" id="gallery"></div></div>
   </section>
 
   <!-- 通话 -->
   <section class="screen" id="call">
-    <div class="page-head"><div class="back" onclick="go('home')">‹</div><div class="page-title">通话</div></div>
+    <div class="page-head"><div class="back" onclick="goBackHome()">‹</div><div class="page-title">通话</div></div>
     <div class="page-body" id="callBody"></div>
   </section>
 
   <!-- 音乐 -->
   <section class="screen" id="music">
-    <div class="page-head"><div class="back" onclick="go('home')">‹</div><div class="page-title">音乐</div></div>
+    <div class="page-head"><div class="back" onclick="goBackHome()">‹</div><div class="page-title">音乐</div></div>
     <div class="page-body">
       <div class="player">
         <div class="cover"><div class="cover-inner"></div></div>
@@ -322,49 +322,49 @@ body{
 
   <!-- 备忘 -->
   <section class="screen" id="memo">
-    <div class="page-head"><div class="back" onclick="go('home')">‹</div><div class="page-title">备忘</div></div>
+    <div class="page-head"><div class="back" onclick="goBackHome()">‹</div><div class="page-title">备忘</div></div>
     <div class="page-body" id="memoBody"></div>
   </section>
 
   <!-- 名片 -->
   <section class="screen" id="card">
-    <div class="page-head"><div class="back" onclick="go('home')">‹</div><div class="page-title">名片</div></div>
+    <div class="page-head"><div class="back" onclick="goBackHome()">‹</div><div class="page-title">名片</div></div>
     <div class="page-body" id="cardBody"></div>
   </section>
 
   <!-- 记忆 -->
   <section class="screen" id="memory">
-    <div class="page-head"><div class="back" onclick="go('home')">‹</div><div class="page-title">记忆</div></div>
+    <div class="page-head"><div class="back" onclick="goBackHome()">‹</div><div class="page-title">记忆</div></div>
     <div class="page-body" id="memoryBody"></div>
   </section>
 
   <!-- 人设 -->
   <section class="screen" id="persona">
-    <div class="page-head"><div class="back" onclick="go('home')">‹</div><div class="page-title">人设</div></div>
+    <div class="page-head"><div class="back" onclick="goBackHome()">‹</div><div class="page-title">人设</div></div>
     <div class="page-body" id="personaBody"></div>
   </section>
 
   <!-- 世界书 -->
   <section class="screen" id="world">
-    <div class="page-head"><div class="back" onclick="go('home')">‹</div><div class="page-title">世界书</div></div>
+    <div class="page-head"><div class="back" onclick="goBackHome()">‹</div><div class="page-title">世界书</div></div>
     <div class="page-body" id="worldBody"></div>
   </section>
 
   <!-- 接口 -->
   <section class="screen" id="api">
-    <div class="page-head"><div class="back" onclick="go('home')">‹</div><div class="page-title">接口</div></div>
+    <div class="page-head"><div class="back" onclick="goBackHome()">‹</div><div class="page-title">接口</div></div>
     <div class="page-body" id="apiBody"></div>
   </section>
 
   <!-- 备份 -->
   <section class="screen" id="backup">
-    <div class="page-head"><div class="back" onclick="go('home')">‹</div><div class="page-title">备份</div></div>
+    <div class="page-head"><div class="back" onclick="goBackHome()">‹</div><div class="page-title">备份</div></div>
     <div class="page-body" id="backupBody"></div>
   </section>
 
   <!-- 设置 -->
   <section class="screen" id="settings">
-    <div class="page-head"><div class="back" onclick="go('home')">‹</div><div class="page-title">设置</div></div>
+    <div class="page-head"><div class="back" onclick="goBackHome()">‹</div><div class="page-title">设置</div></div>
     <div class="page-body" id="settingsBody"></div>
   </section>
 
@@ -457,7 +457,8 @@ function go(id){
   if(id==='album')renderAlbum();
   if(id==='call')renderCall();
 }
-function unlock(){go('home');}
+function unlock(){}
+function goBackHome(){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById('lock').classList.add('active');}
 
 /* ============ 桌面图标 ============ */
 const APPS=[
